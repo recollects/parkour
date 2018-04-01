@@ -14,12 +14,12 @@ public class AsynExecutorCmd {
     /**
      * 任务状态
      **/
-    private AsynExecutorCmdEnum status;
+    private AsynCmdStatusEnum status;
 
     /**
      * 重试次数
      */
-    private int executeTimes = 0;
+    private int retryCount = 0;
 
     /**
      * 下次执行时间
@@ -55,20 +55,20 @@ public class AsynExecutorCmd {
      */
     private String cmdType;
 
-    public AsynExecutorCmdEnum getStatus() {
+    public AsynCmdStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(AsynExecutorCmdEnum status) {
+    public void setStatus(AsynCmdStatusEnum status) {
         this.status = status;
     }
 
-    public int getExecuteTimes() {
-        return executeTimes;
+    public void setRetryCount(int retryCount) {
+        this.retryCount = retryCount;
     }
 
-    public void setExecuteTimes(int executeTimes) {
-        this.executeTimes = executeTimes;
+    public int getRetryCount() {
+        return retryCount;
     }
 
     public Date getNextExecuteTime() {

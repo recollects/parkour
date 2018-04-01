@@ -1,5 +1,6 @@
 package com.alipay.parkour.dal.dataObject;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,8 +8,19 @@ import java.util.Date;
  * @version V1.0
  * @date 2018年03月31日 上午11:31
  */
-public class AsynExecutorCmdObject {
+public class AsynExecutorCmdObject implements Serializable{
 
+    private static final long serialVersionUID = -961168037924367101L;
+
+    /**
+     * ID
+     */
+    private String id;
+
+    private Date gmtCreate;
+    private Date gmtModified;
+    private String creator;
+    private String modifier;
     /**
      * 任务状态
      **/
@@ -17,7 +29,7 @@ public class AsynExecutorCmdObject {
     /**
      * 重试次数
      */
-    private int executeTimes = 0;
+    private int retryCount = 0;
 
     /**
      * 下次执行时间
@@ -39,14 +51,9 @@ public class AsynExecutorCmdObject {
     private String exceptionContext;
 
     /**
-     * ID
-     */
-    private String id;
-
-    /**
      * 主机名
      */
-    private String hostname;
+    private String hostName;
 
     /**
      * 命令类型
@@ -58,6 +65,38 @@ public class AsynExecutorCmdObject {
      */
     private String tableNamePrefix;
 
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+    public void setGmtModified(Date gmtModified) {
+        this.gmtModified = gmtModified;
+    }
+
+    public Date getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public Date getGmtModified() {
+        return gmtModified;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public String getModifier() {
+        return modifier;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -66,12 +105,12 @@ public class AsynExecutorCmdObject {
         this.status = status;
     }
 
-    public int getExecuteTimes() {
-        return executeTimes;
+    public void setRetryCount(int retryCount) {
+        this.retryCount = retryCount;
     }
 
-    public void setExecuteTimes(int executeTimes) {
-        this.executeTimes = executeTimes;
+    public int getRetryCount() {
+        return retryCount;
     }
 
     public Date getNextExecuteTime() {
@@ -114,12 +153,12 @@ public class AsynExecutorCmdObject {
         this.id = id;
     }
 
-    public String getHostname() {
-        return hostname;
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
     }
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
+    public String getHostName() {
+        return hostName;
     }
 
     public String getCmdType() {

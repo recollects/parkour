@@ -12,7 +12,6 @@ import java.util.List;
  */
 public class AsynExecutorMysqlCmdDAOImpl implements AsynExecutorCmdDAO{
 
-
     @Override
     public void save(AsynExecutorCmdObject cmdObject) {
 
@@ -34,7 +33,7 @@ public class AsynExecutorMysqlCmdDAOImpl implements AsynExecutorCmdDAO{
     }
 
     @Override
-    public List<AsynExecutorCmdObject> selectByCmdType(String cmdType, Integer limit) {
+    public List<AsynExecutorCmdObject> selectByCmdType(String cmdType, Integer limit,String tableNamePrefix) {
         return null;
     }
 }

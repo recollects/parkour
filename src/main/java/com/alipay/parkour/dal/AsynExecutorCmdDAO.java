@@ -40,6 +40,6 @@ public interface AsynExecutorCmdDAO {
      * @param limit
      * @return
      */
-    List<AsynExecutorCmdObject> selectByCmdType(String cmdType,Integer limit);
+    List<AsynExecutorCmdObject> selectByCmdType(String cmdType,Integer limit,String tableNamePrefix);
 
 }

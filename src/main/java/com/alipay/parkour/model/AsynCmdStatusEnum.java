@@ -7,7 +7,7 @@ package com.alipay.parkour.model;
  * @version V1.0
  * @date 2018年03月31日 上午11:19
  */
-public enum AsynExecutorCmdEnum {
+public enum AsynCmdStatusEnum {
 
     /**
      * 初始化

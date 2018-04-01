@@ -23,8 +23,29 @@ public @interface AsynExecutedHandle {
 
     /**
      * 批量处理任务数量
+     *
      * @return
      */
     int size() default 20;
+
+    /**
+     * 这类型命令线程池核心数
+     *
+     * @return
+     */
+    int coreSize() default 10;
+
+    /**
+     * 这类型命令线程池最大核心数
+     *
+     * @return
+     */
+    int maxSize() default 20;
+
+    /**
+     * 是否需要备份
+     * @return
+     */
+    boolean backup() default false;
 
 }

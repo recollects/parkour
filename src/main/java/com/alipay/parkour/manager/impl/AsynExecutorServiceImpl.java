@@ -6,12 +6,16 @@ import com.alipay.parkour.dal.AsynExecutorCmdDAO;
 import com.alipay.parkour.dal.dataObject.AsynExecutorCmdObject;
 import com.alipay.parkour.manager.AsynExecutorService;
 import com.alipay.parkour.model.*;
+import com.alipay.parkour.model.AsynCmdDefinition.Builder;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -23,6 +27,7 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -34,11 +39,14 @@ import java.util.Set;
 public class AsynExecutorServiceImpl implements AsynExecutorService {
 
     /**
+     * logger
+     */
+    protected static final Logger logger = LoggerFactory.getLogger(AsynExecutorServiceImpl.class);
+
+    /**
      * 命令容器[包涵所有的命令类型]
      */
-    private Map<AsynExecutedHandle, Method> asynExecutedCmdMap = Maps.newConcurrentMap();
-    private Map<String, AsynExecutedConfig> asynCmdConfigMap = Maps.newConcurrentMap();
-    private Map<String, Object> asynCmdObjectMap = Maps.newConcurrentMap();
+    private Map<String, AsynCmdDefinition> asynCmdDefinitionMap = Maps.newConcurrentMap();
 
     /**
      * 命令列表
@@ -65,35 +73,41 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
      */
     private TransactionTemplate transactionTemplate;
 
-    /**线程池*/
+    /**
+     * 线程池
+     */
     protected ThreadPoolTaskExecutor executor;
 
     /**
      * 将带了命令类型的类获取到,类似于springmvc web里的controller
      */
     public void start() {
-        Map<String, Object> beansWithAnnotation = ParkourApplicationContext.getApplicationContext().getBeansWithAnnotation(AsynExecuted.class);
+        Map<String, Object> beansWithAnnotation = ParkourApplicationContext.getApplicationContext()
+            .getBeansWithAnnotation(AsynExecuted.class);
 
         if (MapUtils.isNotEmpty(beansWithAnnotation)) {
             Set<Map.Entry<String, Object>> entries = beansWithAnnotation.entrySet();
 
             Iterator<Map.Entry<String, Object>> iterator = entries.iterator();
 
-            while (iterator.hasNext()) {
+            Iterators.all(iterator, new Predicate<Entry<String, Object>>() {
+                @Override
+                public boolean apply(Entry<String, Object> stringObjectEntry) {
+                    addToAsynCmdMap(iterator.next());
+                    return false;
+                }
+            });
 
-                addToAsynCmdMap(iterator.next());
-
-            }
+            logger.info("装载成功命令列表:{}", asynExecutedCmds);
         }
     }
 
     /**
-     *
      * @param cmdType
      */
-    protected void pushCmdToExecuter(String cmdType) {
+    public void pushCmdToExecuter(String cmdType) {
 
-        transactionTemplate.execute(new TransactionCallbackWithoutResult(){
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
@@ -104,18 +118,16 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
     }
 
     /**
-     *
      * @param cmdType
      */
     private void doExecute(String cmdType) {
 
-        AsynExecutedConfig executedConfig = asynCmdConfigMap.get(cmdType);
+        AsynCmdDefinition executedConfig = asynCmdDefinitionMap.get(cmdType);
 
-        List<AsynExecutorCmdObject> asynExecutorCmdObjects = asynExecutorCmdDAO.selectByCmdType(cmdType, executedConfig.getSize());
+        List<AsynExecutorCmdObject> asynExecutorCmdObjects = asynExecutorCmdDAO.selectByCmdType(cmdType,
+            executedConfig.getSize(), tableNamePrefix);
 
         List<AsynExecutorCmd> asynExecutorCmds = convertTOCmd(asynExecutorCmdObjects);
-
-
 
         transactionNewTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
@@ -124,21 +136,26 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
             }
         });
 
-        for(AsynExecutorCmd cmd:asynExecutorCmds){
-            //TODO 存在线程池满状态,如果没有添加成功,将状态重置
-            executor.execute(new AsynExecutorRunner(cmd));
-        }
+        Iterators.all(asynExecutorCmds.iterator(), new Predicate<AsynExecutorCmd>() {
+            @Override
+            public boolean apply(AsynExecutorCmd asynExecutorCmd) {
+                //TODO 存在线程池满状态,如果没有添加成功,将状态重置
+                executor.execute(new AsynExecutorRunner(asynExecutorCmd));
+                return false;
+            }
+        });
+
     }
 
     /**
      *
      */
-    class AsynExecutorRunner<T extends AsynExecutorCmd> implements Runnable{
+    class AsynExecutorRunner<T extends AsynExecutorCmd> implements Runnable {
 
         private T cmd;
 
-        AsynExecutorRunner(T cmd){
-            this.cmd=cmd;
+        AsynExecutorRunner(T cmd) {
+            this.cmd = cmd;
         }
 
         @Override
@@ -149,31 +166,36 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
         }
     }
 
-    private <T extends AsynExecutorCmd> void beforProcess(T cmd){}
-    private <T extends AsynExecutorCmd> void afterProcess(T cmd){}
+    private <T extends AsynExecutorCmd> void beforProcess(T cmd) {}
+
+    private <T extends AsynExecutorCmd> void afterProcess(T cmd) {}
 
     /**
-     *
      * @param cmd
      * @param <T>
      */
-    private <T extends AsynExecutorCmd> void toWork(T cmd){
+    private <T extends AsynExecutorCmd> void toWork(T cmd) {
 
-        Method method = asynExecutedCmdMap.get(cmd.getCmdType());
+        AsynCmdDefinition asynCmdDefinition = asynCmdDefinitionMap.get(cmd.getCmdType());
 
-        Object obj = asynCmdObjectMap.get(cmd.getCmdType());
+        Method method = asynCmdDefinition.getMethod();
+
+        Object obj = asynCmdDefinition.getObject();
 
         try {
-            method.invoke(obj,cmd);
+            method.invoke(obj, cmd);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            //TODO 将异常信息写入这条任务的exceptionContext里
+            logger.error("执行任务方法异常，cmd:{}", cmd, e);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            //TODO 将异常信息写入这条任务的exceptionContext里,将这里的异常信息拼接进去。然后将状态改成异常状态
+            //然后根据重试次数来进行重试
+            logger.error("执行任务方法异常，cmd:{}", cmd, e);
+        } catch (Error e) {
+            //TODO 同上，将任务状态改为ERROR
+            logger.error("执行任务方法错误，cmd:{}", cmd, e);
         }
-
-
     }
-
 
     /**
      * 对每个标识的AsynExecuted注解的类解析命令出来
@@ -186,7 +208,7 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
 
         List<Method> methods = ReflectionUtils.findMethod(value.getClass(), true);
 
-        Iterators.any(methods.iterator(), new Predicate<Method>() {
+        Iterators.all(methods.iterator(), new Predicate<Method>() {
             @Override
             public boolean apply(Method input) {
 
@@ -196,13 +218,22 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
                     if (asynExecutedCmds.contains(executedHandle.value())) {
                         throw new RuntimeException(executedHandle.value() + "命令类型存在重复...");
                     }
-                    asynExecutedCmdMap.put(executedHandle, input);
-                    AsynExecutedConfig config = new AsynExecutedConfig();
-                    config.setCmdType(executedHandle.value());
-                    config.setSize(executedHandle.size());
-                    asynCmdConfigMap.put(executedHandle.value(), config);
-                    asynCmdObjectMap.put(executedHandle.value(),value);
+
+                    //解析对任务的配置信息
+                    AsynCmdDefinition builder = new Builder()
+                        .cmdType(executedHandle.value())
+                        .coreSize(executedHandle.coreSize())
+                        .size(executedHandle.size())
+                        .maxSize(executedHandle.maxSize())
+                        .object(value)
+                        .method(input)
+                        .backup(executedHandle.backup())
+                        .builder();
+
+                    //存在map里，KEY是命令类型，VALUE是这条命令的配置信息
+                    asynCmdDefinitionMap.put(executedHandle.value(), builder);
                     asynExecutedCmds.add(executedHandle.value());
+                    logger.debug("初始装载命令信息,cmdType:{},cmdDefinition:{}", executedHandle.value(), builder);
                 }
 
                 return false;
@@ -218,7 +249,6 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
 
         List<AsynExecutorCmd> cmds = Lists.newArrayList();
 
-
         if (CollectionUtils.isNotEmpty(asynExecutorCmdObjects)) {
             Iterators.any(asynExecutorCmdObjects.iterator(), new Predicate<AsynExecutorCmdObject>() {
                 AsynExecutorCmd cmd = null;
@@ -230,11 +260,11 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
                     cmd.setCmdType(input.getCmdType());
                     cmd.setContext(input.getContext());
                     cmd.setExceptionContext(input.getExceptionContext());
-                    cmd.setExecuteTimes(input.getExecuteTimes());
-                    cmd.setHostname(input.getHostname());
+                    cmd.setRetryCount(input.getRetryCount());
+                    cmd.setHostname(input.getHostName());
                     cmd.setId(input.getId());
                     cmd.setNextExecuteTime(input.getNextExecuteTime());
-                    cmd.setStatus(AsynExecutorCmdEnum.valueOf(input.getStatus()));
+                    cmd.setStatus(AsynCmdStatusEnum.valueOf(input.getStatus()));
                     return false;
                 }
             });
@@ -243,13 +273,17 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
         return cmds;
     }
 
+    @Override
+    public List<String> getAsynExecutedCmds() {
+        return asynExecutedCmds;
+    }
 
-    public Map<AsynExecutedHandle, Method> getAsynExecutedCmdMap() {
-        return asynExecutedCmdMap;
+    public Map<String, AsynCmdDefinition> getAsynCmdDefinitionMap() {
+        return asynCmdDefinitionMap;
     }
 
     public void clear() {
-        asynExecutedCmdMap.clear();
+        asynCmdDefinitionMap.clear();
     }
 
     public void setTransactionNewTemplate(TransactionTemplate transactionNewTemplate) {
@@ -263,6 +297,5 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
     public void setTableNamePrefix(String tableNamePrefix) {
         this.tableNamePrefix = tableNamePrefix;
     }
-
 
 }

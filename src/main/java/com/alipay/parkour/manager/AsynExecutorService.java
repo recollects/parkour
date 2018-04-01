@@ -1,5 +1,7 @@
 package com.alipay.parkour.manager;
 
+import java.util.List;
+
 /**
  * @author recollects
  * @version V1.0
@@ -7,11 +9,11 @@ package com.alipay.parkour.manager;
  */
 public interface AsynExecutorService {
 
+
+
     /**
-     * 获取可以执行的命令集合
-     *
+     * 获取所有命令列表
      * @return
      */
-//    List<AsynExecutorCmd> getAsynExecutorList();
-
+    List<String> getAsynExecutedCmds();
 }

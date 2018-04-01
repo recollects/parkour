@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alibaba.adminmap.dao.userlocation.UserLocationInfoDAO">
+    <resultMap id="BaseResultMap" type="com.alipay.parkour.dal.dataObject.AsynExecutorCmdObject">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP" />
+        <result property="creator" column="creator" jdbcType="VARCHAR" />
+        <result property="modifier" column="modifier" jdbcType="VARCHAR" />
+
+        <result property="businessNo" column="business_no" jdbcType="VARCHAR" />
+        <result property="cmdType" column="cmd_type" jdbcType="VARCHAR" />
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+
+        <result property="retryCount" column="execute_times" jdbcType="BIGINT" />
+        <result property="nextExecuteTime" column="next_execute_time" jdbcType="TIMESTAMP" />
+
+        <result property="context" column="context" jdbcType="VARCHAR" />
+        <result property="exceptionContext" column="exception_context" jdbcType="VARCHAR" />
+
+        <result property="hostName" column="host_name" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+    <insert id="save" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+
+    </insert>
+
+    <update id="update">
+
+    </update>
+
+    <insert id="backup" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+
+    </insert>
+
+    <select id="selectByBusinessNoAndCmdType" resultMap="BaseResultMap">
+
+    </select>
+
+    <select id="selectByCmdType" resultMap="BaseResultMap">
+
+    </select>
+
+
+</mapper>
