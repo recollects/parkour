@@ -1,20 +1,30 @@
-package com.alipay.parkour.model;
+package com.alipay.parkour.asyncmd.dal.dataObject;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author recollects
  * @version V1.0
- * @date 2018年03月31日 上午11:26
+ * @date 2018年03月31日 上午11:31
  */
-public class AsynExecutorCmd {
+public class AsynExecutorCmdObject implements Serializable{
 
+    private static final long serialVersionUID = -961168037924367101L;
+
+    /**
+     * ID
+     */
+    private String id;
+
+    private Date gmtCreate;
+    private Date gmtModified;
+    private String creator;
+    private String modifier;
     /**
      * 任务状态
      **/
-    private AsynCmdStatusEnum status;
+    private String status;
 
     /**
      * 重试次数
@@ -41,25 +51,57 @@ public class AsynExecutorCmd {
     private String exceptionContext;
 
     /**
-     * ID
-     */
-    private String id;
-
-    /**
      * 主机名
      */
-    private String hostname;
+    private String hostName;
 
     /**
      * 命令类型
      */
     private String cmdType;
 
-    public AsynCmdStatusEnum getStatus() {
+    /**
+     * 表名前缀
+     */
+    private String tableName;
+
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+    public void setGmtModified(Date gmtModified) {
+        this.gmtModified = gmtModified;
+    }
+
+    public Date getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public Date getGmtModified() {
+        return gmtModified;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public String getModifier() {
+        return modifier;
+    }
+
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(AsynCmdStatusEnum status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -111,12 +153,12 @@ public class AsynExecutorCmd {
         this.id = id;
     }
 
-    public String getHostname() {
-        return hostname;
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
     }
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
+    public String getHostName() {
+        return hostName;
     }
 
     public String getCmdType() {
@@ -127,8 +169,11 @@ public class AsynExecutorCmd {
         this.cmdType = cmdType;
     }
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    public String getTableName() {
+        return tableName;
     }
 }

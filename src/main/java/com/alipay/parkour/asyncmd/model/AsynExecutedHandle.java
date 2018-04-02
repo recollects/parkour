@@ -1,4 +1,4 @@
-package com.alipay.parkour.model;
+package com.alipay.parkour.asyncmd.model;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

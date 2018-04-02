@@ -1,6 +1,6 @@
-package com.alipay.parkour.dal;
+package com.alipay.parkour.asyncmd.dal;
 
-import com.alipay.parkour.dal.dataObject.AsynExecutorCmdObject;
+import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdObject;
 
 import java.util.List;
 
@@ -11,6 +11,11 @@ import java.util.List;
  */
 public interface AsynExecutorCmdDAO {
 
+    /**
+     * 保存一条命令
+     *
+     * @param cmdObject
+     */
     void save(AsynExecutorCmdObject cmdObject);
 
     /**
@@ -27,19 +32,20 @@ public interface AsynExecutorCmdDAO {
 
     /**
      * 按业务编号命令类型查数据
+     *
      * @param businessNo
      * @param cmdType
-     * @param tableNamePrefix
+     * @param tableName
      * @return
      */
-    AsynExecutorCmdObject selectByBusinessNoAndCmdType(String businessNo ,String cmdType,String tableNamePrefix);
+    AsynExecutorCmdObject selectByBusinessNoAndCmdType(String businessNo, String cmdType, String tableName);
 
     /**
-     *
      * @param cmdType
      * @param limit
+     * @param tableName
      * @return
      */
-    List<AsynExecutorCmdObject> selectByCmdType(String cmdType,Integer limit,String tableNamePrefix);
+    List<AsynExecutorCmdObject> selectByCmdType(String cmdType, Integer limit, String tableName);
 
 }

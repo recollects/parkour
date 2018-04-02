@@ -1,4 +1,4 @@
-package com.alipay.parkour.common.utils;
+package com.alipay.parkour.utils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;

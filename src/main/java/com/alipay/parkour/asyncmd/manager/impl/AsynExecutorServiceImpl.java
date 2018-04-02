@@ -1,19 +1,19 @@
-package com.alipay.parkour.manager.impl;
+package com.alipay.parkour.asyncmd.manager.impl;
 
-import com.alipay.parkour.common.utils.ReflectionUtils;
+import com.alipay.parkour.utils.ReflectionUtils;
 import com.alipay.parkour.context.ParkourApplicationContext;
-import com.alipay.parkour.dal.AsynExecutorCmdDAO;
-import com.alipay.parkour.dal.dataObject.AsynExecutorCmdObject;
-import com.alipay.parkour.manager.AsynExecutorService;
-import com.alipay.parkour.model.*;
-import com.alipay.parkour.model.AsynCmdDefinition.Builder;
+import com.alipay.parkour.asyncmd.dal.AsynExecutorCmdDAO;
+import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdObject;
+import com.alipay.parkour.asyncmd.manager.AsynExecutorService;
+import com.alipay.parkour.asyncmd.model.*;
+import com.alipay.parkour.asyncmd.model.AsynCmdDefinition.Builder;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -78,12 +78,16 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
      */
     protected ThreadPoolTaskExecutor executor;
 
+    private static final String DEFAULT_TABLE_NAME = "asyn_executor_cmd";
+
+    private static String ASYN_EXECUTOR_CMD_TABLE_NAME;
+
     /**
      * 将带了命令类型的类获取到,类似于springmvc web里的controller
      */
     public void start() {
         Map<String, Object> beansWithAnnotation = ParkourApplicationContext.getApplicationContext()
-            .getBeansWithAnnotation(AsynExecuted.class);
+                .getBeansWithAnnotation(AsynExecuted.class);
 
         if (MapUtils.isNotEmpty(beansWithAnnotation)) {
             Set<Map.Entry<String, Object>> entries = beansWithAnnotation.entrySet();
@@ -100,6 +104,11 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
 
             logger.info("装载成功命令列表:{}", asynExecutedCmds);
         }
+
+        ASYN_EXECUTOR_CMD_TABLE_NAME = StringUtils.isNotEmpty(tableNamePrefix) ? ASYN_EXECUTOR_CMD_TABLE_NAME = tableNamePrefix + DEFAULT_TABLE_NAME : DEFAULT_TABLE_NAME;
+
+        logger.info("初始化組裝命令表名:{}",ASYN_EXECUTOR_CMD_TABLE_NAME);
+
     }
 
     /**
@@ -125,7 +134,7 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
         AsynCmdDefinition executedConfig = asynCmdDefinitionMap.get(cmdType);
 
         List<AsynExecutorCmdObject> asynExecutorCmdObjects = asynExecutorCmdDAO.selectByCmdType(cmdType,
-            executedConfig.getSize(), tableNamePrefix);
+                executedConfig.getSize(), ASYN_EXECUTOR_CMD_TABLE_NAME);
 
         List<AsynExecutorCmd> asynExecutorCmds = convertTOCmd(asynExecutorCmdObjects);
 
@@ -166,9 +175,11 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
         }
     }
 
-    private <T extends AsynExecutorCmd> void beforProcess(T cmd) {}
+    private <T extends AsynExecutorCmd> void beforProcess(T cmd) {
+    }
 
-    private <T extends AsynExecutorCmd> void afterProcess(T cmd) {}
+    private <T extends AsynExecutorCmd> void afterProcess(T cmd) {
+    }
 
     /**
      * @param cmd
@@ -221,14 +232,14 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
 
                     //解析对任务的配置信息
                     AsynCmdDefinition builder = new Builder()
-                        .cmdType(executedHandle.value())
-                        .coreSize(executedHandle.coreSize())
-                        .size(executedHandle.size())
-                        .maxSize(executedHandle.maxSize())
-                        .object(value)
-                        .method(input)
-                        .backup(executedHandle.backup())
-                        .builder();
+                            .cmdType(executedHandle.value())
+                            .coreSize(executedHandle.coreSize())
+                            .size(executedHandle.size())
+                            .maxSize(executedHandle.maxSize())
+                            .object(value)
+                            .method(input)
+                            .backup(executedHandle.backup())
+                            .builder();
 
                     //存在map里，KEY是命令类型，VALUE是这条命令的配置信息
                     asynCmdDefinitionMap.put(executedHandle.value(), builder);

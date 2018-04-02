@@ -1,8 +1,8 @@
 package com.alipay.parkour.bean;
 
-import com.alipay.parkour.model.AsynExecuted;
-import com.alipay.parkour.model.AsynExecutedHandle;
-import com.alipay.parkour.model.AsynExecutorCmd;
+import com.alipay.parkour.asyncmd.model.AsynExecuted;
+import com.alipay.parkour.asyncmd.model.AsynExecutedHandle;
+import com.alipay.parkour.asyncmd.model.AsynExecutorCmd;
 
 /**
  * @author recollects

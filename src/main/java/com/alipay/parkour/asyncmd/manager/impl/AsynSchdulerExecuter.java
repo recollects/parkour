@@ -1,7 +1,7 @@
-package com.alipay.parkour.manager.impl;
+package com.alipay.parkour.asyncmd.manager.impl;
 
-import com.alipay.parkour.manager.AsynExecutorService;
-import com.alipay.parkour.manager.Executer;
+import com.alipay.parkour.asyncmd.manager.AsynExecutorService;
+import com.alipay.parkour.asyncmd.manager.Executer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

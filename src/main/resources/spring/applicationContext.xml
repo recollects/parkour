@@ -25,7 +25,7 @@
         </property>
     </bean>
 
-    <bean id="parkourApplicationContext" class="com.alipay.parkour.context.ParkourApplicationContext"/>
+    <!--<bean id="parkourApplicationContext" class="com.alipay.parkour.context.ParkourApplicationContext"/>-->
 
     <bean id="asynSchdulerThreadPool" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
         <property name="corePoolSize" value="15"></property>

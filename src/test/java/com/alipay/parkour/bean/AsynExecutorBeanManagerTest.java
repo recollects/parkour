@@ -2,9 +2,9 @@ package com.alipay.parkour.bean;
 
 import com.alipay.parkour.base.BaseJunit4Test;
 import com.alipay.parkour.context.ParkourApplicationContext;
-import com.alipay.parkour.model.AsynExecuted;
-import com.alipay.parkour.model.AsynExecutedHandle;
-import com.alipay.parkour.model.AsynExecutorCmd;
+import com.alipay.parkour.asyncmd.model.AsynExecuted;
+import com.alipay.parkour.asyncmd.model.AsynExecutedHandle;
+import com.alipay.parkour.asyncmd.model.AsynExecutorCmd;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.junit.Test;

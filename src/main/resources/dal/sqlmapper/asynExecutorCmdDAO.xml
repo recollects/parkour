@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.alibaba.adminmap.dao.userlocation.UserLocationInfoDAO">
-    <resultMap id="BaseResultMap" type="com.alipay.parkour.dal.dataObject.AsynExecutorCmdObject">
+<mapper namespace="com.alipay.parkour.asyncmd.dal.AsynExecutorCmdDAO">
+    <resultMap id="BaseResultMap" type="com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdObject">
         <id property="id" column="id" jdbcType="BIGINT"/>
 
         <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>

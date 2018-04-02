@@ -2,8 +2,8 @@ package com.alipay.parkour.utils;
 
 import com.alipay.parkour.bean.DemoAAsynExecutor;
 import com.alipay.parkour.bean.DemoBAsynExecutor;
-import com.alipay.parkour.model.AsynExecutedHandle;
-import com.alipay.parkour.model.AsynExecutorCmd;
+import com.alipay.parkour.asyncmd.model.AsynExecutedHandle;
+import com.alipay.parkour.asyncmd.model.AsynExecutorCmd;
 
 import java.lang.reflect.Method;
 

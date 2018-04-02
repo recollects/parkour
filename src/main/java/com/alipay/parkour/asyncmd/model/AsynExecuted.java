@@ -1,4 +1,4 @@
-package com.alipay.parkour.model;
+package com.alipay.parkour.asyncmd.model;
 
 import org.springframework.stereotype.Service;
 

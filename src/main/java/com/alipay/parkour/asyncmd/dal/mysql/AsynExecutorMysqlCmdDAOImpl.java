@@ -1,7 +1,7 @@
-package com.alipay.parkour.dal.mysql;
+package com.alipay.parkour.asyncmd.dal.mysql;
 
-import com.alipay.parkour.dal.AsynExecutorCmdDAO;
-import com.alipay.parkour.dal.dataObject.AsynExecutorCmdObject;
+import com.alipay.parkour.asyncmd.dal.AsynExecutorCmdDAO;
+import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdObject;
 
 import java.util.List;
 
@@ -28,12 +28,12 @@ public class AsynExecutorMysqlCmdDAOImpl implements AsynExecutorCmdDAO{
     }
 
     @Override
-    public AsynExecutorCmdObject selectByBusinessNoAndCmdType(String businessNo, String cmdType, String tableNamePrefix) {
+    public AsynExecutorCmdObject selectByBusinessNoAndCmdType(String businessNo, String cmdType, String tableName) {
         return null;
     }
 
     @Override
-    public List<AsynExecutorCmdObject> selectByCmdType(String cmdType, Integer limit,String tableNamePrefix) {
+    public List<AsynExecutorCmdObject> selectByCmdType(String cmdType, Integer limit,String tableName) {
         return null;
     }
 }

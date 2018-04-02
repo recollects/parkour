@@ -1,4 +1,4 @@
-package com.alipay.parkour.model;
+package com.alipay.parkour.asyncmd.model;
 
 /**
  * 任务状态
