@@ -55,7 +55,7 @@ public class BizLockServiceImpl implements BizLockService {
      * 实例bean,初始化调用
      */
     public void start(){
-        BIZ_LOCK_TABLE_NAME = StringUtils.isNotEmpty(tableNamePrefix) ? tableNamePrefix + DEFAULT_TABLE_NAME : DEFAULT_TABLE_NAME;
+        BIZ_LOCK_TABLE_NAME = StringUtils.isNotEmpty(tableNamePrefix) ? tableNamePrefix +"_"+ DEFAULT_TABLE_NAME : DEFAULT_TABLE_NAME;
     }
 
     @Override

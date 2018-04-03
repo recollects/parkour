@@ -2,8 +2,8 @@ package com.alipay.parkour.bean;
 
 import com.alipay.parkour.base.BaseJunit4Test;
 import com.alipay.parkour.context.ParkourApplicationContext;
-import com.alipay.parkour.asyncmd.model.AsynExecuted;
-import com.alipay.parkour.asyncmd.model.AsynExecutedHandle;
+import com.alipay.parkour.asyncmd.model.AsynController;
+import com.alipay.parkour.asyncmd.model.AsynWork;
 import com.alipay.parkour.asyncmd.model.AsynExecutorCmd;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -67,7 +67,7 @@ public class AsynExecutorBeanManagerTest extends BaseJunit4Test {
 
         Map<String, Object> map = Maps.newConcurrentMap();
 
-        Map<String, Object> beansWithAnnotation = ParkourApplicationContext.getApplicationContext().getBeansWithAnnotation(AsynExecuted.class);
+        Map<String, Object> beansWithAnnotation = ParkourApplicationContext.getApplicationContext().getBeansWithAnnotation(AsynController.class);
 
         System.out.println(beansWithAnnotation);
 
@@ -83,13 +83,13 @@ public class AsynExecutorBeanManagerTest extends BaseJunit4Test {
 
             for (Method method : methods) {
 
-                AsynExecutedHandle annotation = method.getAnnotation(AsynExecutedHandle.class);
+                AsynWork annotation = method.getAnnotation(AsynWork.class);
 
                 if (annotation != null && map.containsKey(annotation.value())) {
                     throw new RuntimeException(annotation.value() + "存在重复");
                 }
 
-                if (method.isAnnotationPresent(AsynExecutedHandle.class)) {
+                if (method.isAnnotationPresent(AsynWork.class)) {
 
                     map.put(annotation.value(), method);
 

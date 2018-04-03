@@ -13,7 +13,10 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-    <mvc:annotation-driven />
+    <!--<mvc:annotation-driven />-->
+
+    <import resource="asynExecutorCmd.xml"/>
+    <import resource="bizLock.xml"/>
 
     <context:component-scan base-package="com.alipay.parkour" />
 
@@ -26,6 +29,8 @@
             </list>
         </property>
     </bean>
+
+    <bean id="parkourApplicationContext" class="com.alipay.parkour.context.ParkourApplicationContext"/>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.alipay.parkour" />

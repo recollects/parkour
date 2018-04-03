@@ -35,8 +35,10 @@ public class AsynCmdDefinition {
 
         private AsynCmdDefinition cmdDefinition;
 
-        public Builder() {
+        public Builder(Object object, Method method) {
             cmdDefinition = new AsynCmdDefinition();
+            cmdDefinition.setObject(object);
+            cmdDefinition.setMethod(method);
         }
 
         public Builder cmdType(String cmdType) {
@@ -59,33 +61,24 @@ public class AsynCmdDefinition {
             return this;
         }
 
-        public Builder object(Object object) {
-            cmdDefinition.setObject(object);
-            return this;
-        }
-
-        public Builder method(Method method) {
-            cmdDefinition.setMethod(method);
-            return this;
-        }
         public Builder backup(boolean backup) {
             cmdDefinition.setBackup(backup);
             return this;
         }
 
-        public AsynCmdDefinition builder(){
+        public AsynCmdDefinition builder() {
 
-            Preconditions.checkArgument(cmdDefinition.getCoreSize()<=0,"executor coreSize is null");
-            Preconditions.checkArgument(cmdDefinition.getMaxSize()<=0,"executor getMaxSize is null");
+            Preconditions.checkArgument(cmdDefinition.getCoreSize() >= 0, "asynCmdDefinition executor coreSize <=0");
+            Preconditions.checkArgument(cmdDefinition.getMaxSize() >= 0, "asynCmdDefinition executor maxSize <=0");
+            Preconditions.checkArgument(cmdDefinition.getSize() >= 0, "asynCmdDefinition size <=0");
 
             executor.setCorePoolSize(cmdDefinition.getCoreSize());
             executor.setMaxPoolSize(cmdDefinition.getMaxSize());
             return cmdDefinition;
         }
-
     }
 
-    public static ThreadPoolTaskExecutor getExecutor() {
+    public ThreadPoolTaskExecutor getExecutor() {
         return executor;
     }
 
