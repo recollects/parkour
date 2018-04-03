@@ -10,10 +10,8 @@
     </settings>
 
     <mappers>
-
-        <!--<mapper resource="com/alipay/parkour/asyncmd/dal/mysql/AsynExecutorCmdDAO.xml" />-->
-        <!--<mapper resource="src/main/java/com/alipay/parkour/bizlock/dal/mysql/bizLockDAO.xml" />-->
-        <!--<package name="com.alipay.parkour.asyncmd.dal"/>-->
+        <mapper resource="com/alipay/parkour/asyncmd/dal/mysql/AsynExecutorCmdDAO.xml" />
+        <mapper resource="com/alipay/parkour/bizlock/dal/mysql/bizLockDAO.xml" />
     </mappers>
 
 </configuration>

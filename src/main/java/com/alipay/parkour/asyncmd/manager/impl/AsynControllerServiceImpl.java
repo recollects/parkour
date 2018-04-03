@@ -1,5 +1,6 @@
 package com.alipay.parkour.asyncmd.manager.impl;
 
+import com.alipay.parkour.asyncmd.dal.AsynExecutorCmdDAO;
 import com.alipay.parkour.asyncmd.manager.AsynControllerService;
 import com.alipay.parkour.asyncmd.model.AsynCmdDefinition;
 import com.alipay.parkour.asyncmd.model.AsynCmdDefinition.Builder;
@@ -13,7 +14,9 @@ import com.google.common.collect.Maps;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Method;
@@ -29,7 +32,7 @@ import java.util.Set;
  * @date 2018/4/3 15:42
  */
 @Service
-public class AsynControllerServiceImpl implements AsynControllerService {
+public class AsynControllerServiceImpl implements AsynControllerService ,ApplicationContextAware{
 
     /**
      * logger
@@ -51,8 +54,7 @@ public class AsynControllerServiceImpl implements AsynControllerService {
      *
      * @return
      */
-    @Override
-    public void init(ApplicationContext applicationContext) {
+    private void init(ApplicationContext applicationContext) {
         Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(AsynController.class);
 
         if (MapUtils.isNotEmpty(beansWithAnnotation)) {
@@ -94,14 +96,14 @@ public class AsynControllerServiceImpl implements AsynControllerService {
                     }
 
                     //解析对任务的配置信息
-                    AsynCmdDefinition builder = new Builder(asynCtrl,input)
-                        .cmdType(asynConf.value())
-                        .coreSize(asynConf.coreSize())
-                        .size(asynConf.size())
-                        .maxSize(asynConf.maxSize())
-                        .backup(asynConf.backup())
-                        .priority(asynConf.priority())
-                        .builder();
+                    AsynCmdDefinition builder = new Builder(asynCtrl, input)
+                            .cmdType(asynConf.value())
+                            .coreSize(asynConf.coreSize())
+                            .size(asynConf.size())
+                            .maxSize(asynConf.maxSize())
+                            .backup(asynConf.backup())
+                            .priority(asynConf.priority())
+                            .builder();
 
                     //存在map里，KEY是命令类型，VALUE是这条命令的配置信息
                     asynCmdDefinitionMap.put(asynConf.value(), builder);
@@ -136,5 +138,10 @@ public class AsynControllerServiceImpl implements AsynControllerService {
     @Override
     public List<String> getAsynExecutedCmds() {
         return asynExecutedCmds;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        init(applicationContext);
     }
 }

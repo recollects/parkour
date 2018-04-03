@@ -23,25 +23,68 @@
 
     </resultMap>
 
-    <insert id="save" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    <sql id="Base_Column_List">
+        id,gmt_create,gmt_modified,creator,modifier,business_no,cmd_type,status,retry_count,next_execute_time,context,exception_context,host_name
+    </sql>
 
+    <sql id="Base_ColumnNoId_List">
+        gmt_create,gmt_modified,creator,modifier,business_no,cmd_type,status,retry_count,next_execute_time,context,exception_context,host_name
+    </sql>
+
+    <!-- 保存 -->
+    <insert id="save" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        insert into ${tableName}(<include refid="Base_ColumnNoId_List"/>)
+        values(now(), now(),
+        #{creator},#{modifier},#{businessNo},#{cmdType},#{status},#{retryCount},#{nextExecuteTime},#{context},#{exceptionContext},#{hostName})
     </insert>
 
+    <!-- 更新 -->
     <update id="update">
-
+        update ${tableName}
+        <set>
+            <if test="modifier != null">
+                modifier = #{modifier},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="retryCount != null">
+                retry_count = #{retryCount},
+            </if>
+            <if test="nextExecuteTime != null">
+                next_execute_time = #{nextExecuteTime},
+            </if>
+            <if test="context != null">
+                context = #{context},
+            </if>
+            <if test="exceptionContext != null">
+                exception_context = #{exceptionContext},
+            </if>
+            <if test="hostName != null">
+                host_name = #{hostName},
+            </if>
+            gmt_modified = now()
+        </set>
+        where id=#{id}
     </update>
 
+    <!-- 备份 -->
     <insert id="backup" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
-
+        insert into ${tableName}_history(<include refid="Base_ColumnNoId_List"/>)
+        values(now(), now(),
+        #{creator},#{modifier},#{businessNo},#{cmdType},#{status},#{retryCount},#{nextExecuteTime},#{context},#{exceptionContext},#{hostName})
     </insert>
 
     <select id="selectByBusinessNoAndCmdType" resultMap="BaseResultMap">
-
+        select <include refid="Base_Column_List"/> from ${tableName} where business_no=${businessNo} and cmd_type=#{cmdType}
     </select>
 
     <select id="selectByCmdType" resultMap="BaseResultMap">
-
+        select <include refid="Base_Column_List"/> from ${tableName}
+        where cmd_type=#{cmdType}
+        <if test="pageSize != null">
+            limit #{pageSize}
+        </if>
     </select>
-
 
 </mapper>

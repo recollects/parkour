@@ -19,19 +19,7 @@ public class ParkourApplicationContext implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ParkourApplicationContext.applicationContext = applicationContext;
-        init();
     }
-
-    /**
-     *
-     */
-    private void init(){
-        //命令的装配
-        AsynControllerService asynControllerService = getBean(AsynControllerService.class);
-        asynControllerService.init(applicationContext);
-    }
-
-
 
     /**
      * @return

@@ -30,8 +30,6 @@
         </property>
     </bean>
 
-    <bean id="parkourApplicationContext" class="com.alipay.parkour.context.ParkourApplicationContext"/>
-
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.alipay.parkour" />
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />

@@ -7,6 +7,7 @@ import com.alipay.parkour.asyncmd.manager.AsynExecutorService;
 import com.alipay.parkour.asyncmd.model.AsynCmdDefinition;
 import com.alipay.parkour.asyncmd.model.AsynCmdStatusEnum;
 import com.alipay.parkour.asyncmd.model.AsynExecutorCmd;
+import com.alipay.parkour.asyncmd.model.query.AsynExecutorCmdQuery;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -80,7 +81,6 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
      * 将带了命令类型的类获取到,类似于springmvc web里的controller
      */
     public void start() {
-
         ASYN_EXECUTOR_CMD_TABLE_NAME = StringUtils.isNotEmpty(tableNamePrefix) ? ASYN_EXECUTOR_CMD_TABLE_NAME =
                 tableNamePrefix + "_" + DEFAULT_TABLE_NAME : DEFAULT_TABLE_NAME;
 
@@ -111,8 +111,11 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
         AsynCmdDefinition executedConfig = asynControllerService.getAsynCmdDefinitionMap().get(cmdType);
 
         //TODO 需要考虑任务的优先级[折中处理方式,优先级高的线程数成比例,例如,10,5优先级,对应的线程数,就是高是低的一倍线程]
-        List<AsynExecutorCmdObject> asynExecutorCmdObjects = asynExecutorCmdDAO.selectByCmdType(cmdType,
-                executedConfig.getSize(), ASYN_EXECUTOR_CMD_TABLE_NAME);
+        AsynExecutorCmdQuery cmdObject = new AsynExecutorCmdQuery();
+        cmdObject.setPageSize(executedConfig.getSize());
+        cmdObject.setCmdType(cmdType);
+        cmdObject.setTableName(ASYN_EXECUTOR_CMD_TABLE_NAME);
+        List<AsynExecutorCmdObject> asynExecutorCmdObjects = asynExecutorCmdDAO.selectByCmdType(cmdObject);
 
         List<AsynExecutorCmd> asynExecutorCmds = convertTOCmd(asynExecutorCmdObjects);
 

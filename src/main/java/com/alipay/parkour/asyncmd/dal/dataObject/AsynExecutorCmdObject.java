@@ -3,12 +3,15 @@ package com.alipay.parkour.asyncmd.dal.dataObject;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.alipay.parkour.common.dal.BaseQuery;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 /**
  * @author recollects
  * @version V1.0
  * @date 2018年03月31日 上午11:31
  */
-public class AsynExecutorCmdObject implements Serializable{
+public class AsynExecutorCmdObject implements Serializable {
 
     private static final long serialVersionUID = -961168037924367101L;
 
@@ -175,5 +178,10 @@ public class AsynExecutorCmdObject implements Serializable{
 
     public String getTableName() {
         return tableName;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

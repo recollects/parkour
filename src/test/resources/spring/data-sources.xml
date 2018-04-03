@@ -53,8 +53,7 @@
 
     <!-- TODO 配置文件最好集成在组件里 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="configLocation" value="classpath:/dal/sqlmap-config.xml"/>
-        <property name="mapperLocations" value="classpath:*dal/**/*.xml" />
+        <property name="configLocation" value="classpath:dal/sqlmap-config.xml"/>
         <property name="dataSource" ref="dataSource"/>
     </bean>
 

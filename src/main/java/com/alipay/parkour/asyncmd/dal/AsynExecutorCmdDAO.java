@@ -1,6 +1,7 @@
 package com.alipay.parkour.asyncmd.dal;
 
 import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdObject;
+import com.alipay.parkour.asyncmd.model.query.AsynExecutorCmdQuery;
 import com.alipay.parkour.common.dal.BaseDAO;
 
 import java.util.List;
@@ -34,19 +35,15 @@ public interface AsynExecutorCmdDAO extends BaseDAO{
     /**
      * 按业务编号命令类型查数据
      *
-     * @param businessNo
-     * @param cmdType
-     * @param tableName
+     * @param cmdObject
      * @return
      */
-    AsynExecutorCmdObject selectByBusinessNoAndCmdType(String businessNo, String cmdType, String tableName);
+    AsynExecutorCmdObject selectByBusinessNoAndCmdType(AsynExecutorCmdQuery cmdObject);
 
     /**
-     * @param cmdType
-     * @param limit
-     * @param tableName
+     * @param cmdObject
      * @return
      */
-    List<AsynExecutorCmdObject> selectByCmdType(String cmdType, Integer limit, String tableName);
+    List<AsynExecutorCmdObject> selectByCmdType(AsynExecutorCmdQuery cmdObject);
 
 }

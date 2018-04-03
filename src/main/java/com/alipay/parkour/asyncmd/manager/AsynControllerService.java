@@ -14,12 +14,6 @@ import java.util.Map;
 public interface AsynControllerService {
 
     /**
-     *
-     * @param applicationContext
-     */
-    void init(ApplicationContext applicationContext);
-
-    /**
      * 获取所有命令
      * @return
      */
