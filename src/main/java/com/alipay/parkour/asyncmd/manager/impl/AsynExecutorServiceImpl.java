@@ -1,19 +1,16 @@
 package com.alipay.parkour.asyncmd.manager.impl;
 
-import com.alipay.parkour.asyncmd.manager.AsynControllerService;
-import com.alipay.parkour.utils.ReflectionUtils;
-import com.alipay.parkour.context.ParkourApplicationContext;
 import com.alipay.parkour.asyncmd.dal.AsynExecutorCmdDAO;
 import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdObject;
+import com.alipay.parkour.asyncmd.manager.AsynControllerService;
 import com.alipay.parkour.asyncmd.manager.AsynExecutorService;
-import com.alipay.parkour.asyncmd.model.*;
-import com.alipay.parkour.asyncmd.model.AsynCmdDefinition.Builder;
+import com.alipay.parkour.asyncmd.model.AsynCmdDefinition;
+import com.alipay.parkour.asyncmd.model.AsynCmdStatusEnum;
+import com.alipay.parkour.asyncmd.model.AsynExecutorCmd;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +23,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * @author recollects
@@ -74,7 +68,13 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
 
     private static String ASYN_EXECUTOR_CMD_TABLE_NAME;
 
+    @Autowired
     private AsynControllerService asynControllerService;
+
+    /**
+     * 队列最大容量
+     */
+    private static final Integer MAX_QUEUE_CAPACITY = 2 >> 16;
 
     /**
      * 将带了命令类型的类获取到,类似于springmvc web里的controller
@@ -82,7 +82,7 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
     public void start() {
 
         ASYN_EXECUTOR_CMD_TABLE_NAME = StringUtils.isNotEmpty(tableNamePrefix) ? ASYN_EXECUTOR_CMD_TABLE_NAME =
-            tableNamePrefix + "_" + DEFAULT_TABLE_NAME : DEFAULT_TABLE_NAME;
+                tableNamePrefix + "_" + DEFAULT_TABLE_NAME : DEFAULT_TABLE_NAME;
 
         logger.info("初始化組裝命令表名:{}", ASYN_EXECUTOR_CMD_TABLE_NAME);
     }
@@ -110,8 +110,9 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
 
         AsynCmdDefinition executedConfig = asynControllerService.getAsynCmdDefinitionMap().get(cmdType);
 
+        //TODO 需要考虑任务的优先级[折中处理方式,优先级高的线程数成比例,例如,10,5优先级,对应的线程数,就是高是低的一倍线程]
         List<AsynExecutorCmdObject> asynExecutorCmdObjects = asynExecutorCmdDAO.selectByCmdType(cmdType,
-            executedConfig.getSize(), ASYN_EXECUTOR_CMD_TABLE_NAME);
+                executedConfig.getSize(), ASYN_EXECUTOR_CMD_TABLE_NAME);
 
         List<AsynExecutorCmd> asynExecutorCmds = convertTOCmd(asynExecutorCmdObjects);
 
@@ -126,8 +127,17 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
             @Override
             public boolean apply(AsynExecutorCmd asynExecutorCmd) {
                 //TODO 存在线程池满状态,如果没有添加成功,将状态重置
-                executor.execute(new AsynExecutorRunner(asynExecutorCmd));
-                return false;
+
+                try {
+                    executor.execute(new AsynExecutorRunner(asynExecutorCmd));
+                } catch (RejectedExecutionException ree) {
+                    logger.error("线程池任务已满,命令类型:{}", asynExecutorCmd.getCmdType(), ree);
+                    //TODO 状态重置
+                } catch (Exception e) {
+                    logger.error("任务执行异常,asynExecutorCmd:{}", asynExecutorCmd, e);
+                }
+
+                return true;
             }
         });
 
@@ -166,12 +176,12 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
 
         AsynCmdDefinition asynCmdDefinition = asynControllerService.getAsynCmdDefinitionMap().get(cmd.getCmdType());
 
-        asynCmdDefinition.getExecutor().submit(new CmdExecutor(asynCmdDefinition,cmd));
+        //TODO 极端情况出现任务添加不进去
+        asynCmdDefinition.getExecutor().submit(new CmdExecutor(asynCmdDefinition, cmd));
 
     }
 
     /**
-     *
      * 命令执行具体业务逻辑
      *
      * @param <T>
@@ -179,9 +189,10 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
     private class CmdExecutor<T extends AsynExecutorCmd> implements Runnable {
         private AsynCmdDefinition asynCmdDefinition;
         T cmd;
-        CmdExecutor(AsynCmdDefinition asynCmdDefinition,T cmd){
-            this.asynCmdDefinition=asynCmdDefinition;
-            this.cmd=cmd;
+
+        CmdExecutor(AsynCmdDefinition asynCmdDefinition, T cmd) {
+            this.asynCmdDefinition = asynCmdDefinition;
+            this.cmd = cmd;
         }
 
         @Override
@@ -257,7 +268,4 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
         this.executor = executor;
     }
 
-    public void setAsynControllerService(AsynControllerService asynControllerService) {
-        this.asynControllerService = asynControllerService;
-    }
 }

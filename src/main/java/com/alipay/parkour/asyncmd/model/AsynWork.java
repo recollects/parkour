@@ -43,6 +43,12 @@ public @interface AsynWork {
     int maxSize() default 20;
 
     /**
+     * 任务优先级,默认10!1优先级最高
+     * @return
+     */
+    int priority() default 10;
+
+    /**
      * 是否需要备份
      * @return
      */

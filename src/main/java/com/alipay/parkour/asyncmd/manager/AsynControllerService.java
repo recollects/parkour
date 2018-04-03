@@ -1,9 +1,10 @@
 package com.alipay.parkour.asyncmd.manager;
 
-import java.util.Map;
-
 import com.alipay.parkour.asyncmd.model.AsynCmdDefinition;
 import org.springframework.context.ApplicationContext;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author recollects
@@ -31,4 +32,9 @@ public interface AsynControllerService {
      */
     AsynCmdDefinition getAsynCmdDefinition(String cmd);
 
+    /**
+     *
+     * @return
+     */
+    List<String> getAsynExecutedCmds();
 }

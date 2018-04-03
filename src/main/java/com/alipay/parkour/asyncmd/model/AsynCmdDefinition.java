@@ -1,10 +1,10 @@
 package com.alipay.parkour.asyncmd.model;
 
-import java.lang.reflect.Method;
-
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.lang.reflect.Method;
 
 /**
  * 异步命令配置
@@ -28,6 +28,8 @@ public class AsynCmdDefinition {
     private Method method;
 
     private boolean backup;
+
+    private Integer priority;
 
     private static ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 
@@ -63,6 +65,11 @@ public class AsynCmdDefinition {
 
         public Builder backup(boolean backup) {
             cmdDefinition.setBackup(backup);
+            return this;
+        }
+
+        public Builder priority(Integer priority) {
+            cmdDefinition.setPriority(priority);
             return this;
         }
 
@@ -132,6 +139,14 @@ public class AsynCmdDefinition {
 
     public String getCmdType() {
         return cmdType;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    public Integer getPriority() {
+        return priority;
     }
 
     @Override
