@@ -94,14 +94,14 @@ public class AsynControllerServiceImpl implements AsynControllerService {
                     }
 
                     //解析对任务的配置信息
-                    AsynCmdDefinition builder = new Builder(asynCtrl,input)
-                        .cmdType(asynConf.value())
-                        .coreSize(asynConf.coreSize())
-                        .size(asynConf.size())
-                        .maxSize(asynConf.maxSize())
-                        .backup(asynConf.backup())
-                        .priority(asynConf.priority())
-                        .builder();
+                    AsynCmdDefinition builder = new Builder(asynCtrl, input)
+                            .cmdType(asynConf.value())
+                            .coreSize(asynConf.coreSize())
+                            .size(asynConf.size())
+                            .maxSize(asynConf.maxSize())
+                            .backup(asynConf.backup())
+                            .priority(asynConf.priority())
+                            .builder();
 
                     //存在map里，KEY是命令类型，VALUE是这条命令的配置信息
                     asynCmdDefinitionMap.put(asynConf.value(), builder);

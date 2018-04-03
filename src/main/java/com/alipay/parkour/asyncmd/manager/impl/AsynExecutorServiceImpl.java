@@ -80,7 +80,6 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
      * 将带了命令类型的类获取到,类似于springmvc web里的controller
      */
     public void start() {
-
         ASYN_EXECUTOR_CMD_TABLE_NAME = StringUtils.isNotEmpty(tableNamePrefix) ? ASYN_EXECUTOR_CMD_TABLE_NAME =
                 tableNamePrefix + "_" + DEFAULT_TABLE_NAME : DEFAULT_TABLE_NAME;
 
