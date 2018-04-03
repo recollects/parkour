@@ -1,6 +1,7 @@
 package com.alipay.parkour.bizlock.dal;
 
 import com.alipay.parkour.bizlock.dal.dataObject.BizLockDO;
+import com.alipay.parkour.common.dal.BaseDAO;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  * @version V1.0
  * @date 2018年04月02日 下午9:07
  */
-public interface BizLockDAO {
+public interface BizLockDAO extends BaseDAO{
 
     /**
      * @param tableName

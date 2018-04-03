@@ -1,6 +1,7 @@
 package com.alipay.parkour.asyncmd.dal;
 
 import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdObject;
+import com.alipay.parkour.common.dal.BaseDAO;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  * @version V1.0
  * @date 2018年03月31日 上午11:38
  */
-public interface AsynExecutorCmdDAO {
+public interface AsynExecutorCmdDAO extends BaseDAO{
 
     /**
      * 保存一条命令

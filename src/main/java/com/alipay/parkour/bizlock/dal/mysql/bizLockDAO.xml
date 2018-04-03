@@ -18,6 +18,31 @@
         <result property="operateTime" column="operate_time" jdbcType="TIMESTAMP"/>
         <result property="masterLockId" column="master_lock_id" jdbcType="VARCHAR"/>
 
-
     </resultMap>
+
+    <select id="forUpdate" resultMap="BaseResultMap">
+
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+
+    </insert>
+
+    <update id="update">
+
+    </update>
+
+    <select id="getByObject" resultMap="BaseResultMap">
+
+
+    </select>
+
+    <select id="getById" resultMap="BaseResultMap">
+
+    </select>
+
+    <delete id="deleteById" >
+
+    </delete>
+
 </mapper>
