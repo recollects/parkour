@@ -108,7 +108,7 @@ public class AsynControllerServiceImpl implements AsynControllerService {
                     //存在map里，KEY是命令类型，VALUE是这条命令的配置信息
                     asynCmdDefinitionMap.put(asynconf.value(), builder);
                     asynExecutedCmds.add(asynconf.value());
-                    logger.debug("初始装载命令信息,cmdType:{},cmdDefinition:{}", asynconf.value(), builder);
+                    logger.debug("装载命令信息中...,cmdType:{},cmdDefinition:{}", asynconf.value(), builder);
                 }
                 return false;
             }
