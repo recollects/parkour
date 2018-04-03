@@ -1,23 +1,19 @@
 package com.alipay.parkour.asyncmd.manager.impl;
 
-import com.alipay.parkour.asyncmd.manager.AsynControllerService;
-import com.alipay.parkour.utils.ReflectionUtils;
-import com.alipay.parkour.context.ParkourApplicationContext;
 import com.alipay.parkour.asyncmd.dal.AsynExecutorCmdDAO;
 import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdObject;
+import com.alipay.parkour.asyncmd.manager.AsynControllerService;
 import com.alipay.parkour.asyncmd.manager.AsynExecutorService;
-import com.alipay.parkour.asyncmd.model.*;
-import com.alipay.parkour.asyncmd.model.AsynCmdDefinition.Builder;
+import com.alipay.parkour.asyncmd.model.AsynCmdDefinition;
+import com.alipay.parkour.asyncmd.model.AsynCmdStatusEnum;
+import com.alipay.parkour.asyncmd.model.AsynExecutorCmd;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -26,11 +22,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * @author recollects
@@ -127,7 +119,7 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
             public boolean apply(AsynExecutorCmd asynExecutorCmd) {
                 //TODO 存在线程池满状态,如果没有添加成功,将状态重置
                 executor.execute(new AsynExecutorRunner(asynExecutorCmd));
-                return false;
+                return true;
             }
         });
 

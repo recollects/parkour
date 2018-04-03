@@ -13,7 +13,7 @@ import com.alipay.parkour.asyncmd.model.AsynExecutorCmd;
 public class DemoAAsynExecutor {
 
 
-    @AsynWork("TP_S_1000:DEMO_B_ASYNEXECUTOR")
+    @AsynWork("TP_S_1000:DEMO_A_ASYNEXECUTOR")
     public void doWork(AsynExecutorCmd cmd) {
         System.out.println("DEMO   B  .....!!!!"+cmd);
     }

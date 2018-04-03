@@ -1,18 +1,10 @@
 package com.alipay.parkour.asyncmd.manager.impl;
 
-import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.alipay.parkour.asyncmd.manager.AsynControllerService;
 import com.alipay.parkour.asyncmd.model.AsynCmdDefinition;
 import com.alipay.parkour.asyncmd.model.AsynCmdDefinition.Builder;
 import com.alipay.parkour.asyncmd.model.AsynController;
 import com.alipay.parkour.asyncmd.model.AsynWork;
-import com.alipay.parkour.context.ParkourApplicationContext;
 import com.alipay.parkour.utils.ReflectionUtils;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
@@ -21,10 +13,15 @@ import com.google.common.collect.Maps;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+
+import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * @author recollects
@@ -65,9 +62,9 @@ public class AsynControllerServiceImpl implements AsynControllerService {
 
             Iterators.all(iterator, new Predicate<Entry<String, Object>>() {
                 @Override
-                public boolean apply(Entry<String, Object> stringObjectEntry) {
-                    addToAsynCmdMap(iterator.next());
-                    return false;
+                public boolean apply(Entry<String, Object> entry) {
+                    addToAsynCmdMap(entry);
+                    return true;
                 }
             });
             logger.info("装载成功命令列表:{}", asynExecutedCmds);
@@ -108,9 +105,9 @@ public class AsynControllerServiceImpl implements AsynControllerService {
                     //存在map里，KEY是命令类型，VALUE是这条命令的配置信息
                     asynCmdDefinitionMap.put(asynconf.value(), builder);
                     asynExecutedCmds.add(asynconf.value());
-                    logger.debug("装载命令信息中...,cmdType:{},cmdDefinition:{}", asynconf.value(), builder);
+                    logger.debug("装载命令信息中...,cmdType:{},asynCmdDefinition:{}", asynconf.value(), builder);
                 }
-                return false;
+                return true;
             }
         });
     }
