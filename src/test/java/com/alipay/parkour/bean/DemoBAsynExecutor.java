@@ -1,7 +1,7 @@
 package com.alipay.parkour.bean;
 
-import com.alipay.parkour.asyncmd.model.AsynExecuted;
-import com.alipay.parkour.asyncmd.model.AsynExecutedHandle;
+import com.alipay.parkour.asyncmd.model.AsynController;
+import com.alipay.parkour.asyncmd.model.AsynWork;
 import com.alipay.parkour.asyncmd.model.AsynExecutorCmd;
 
 /**
@@ -9,10 +9,10 @@ import com.alipay.parkour.asyncmd.model.AsynExecutorCmd;
  * @version V1.0
  * @date 2018年03月31日 下午2:40
  */
-@AsynExecuted
+@AsynController
 public class DemoBAsynExecutor {
 
-    @AsynExecutedHandle("TP_S_1000:DEMO_B_ASYNEXECUTOR")
+    @AsynWork("TP_S_1000:DEMO_B_ASYNEXECUTOR")
     public void doWork(AsynExecutorCmd cmd){
         System.out.println("DEMO   A  .....!!!!"+cmd.toString());
     }

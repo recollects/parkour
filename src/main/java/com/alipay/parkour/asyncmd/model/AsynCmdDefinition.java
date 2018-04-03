@@ -31,6 +31,7 @@ public class AsynCmdDefinition {
 
     private static ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 
+
     public static class Builder {
 
         private AsynCmdDefinition cmdDefinition;
@@ -75,17 +76,16 @@ public class AsynCmdDefinition {
 
         public AsynCmdDefinition builder(){
 
-            Preconditions.checkArgument(cmdDefinition.getCoreSize()<=0,"executor coreSize is null");
-            Preconditions.checkArgument(cmdDefinition.getMaxSize()<=0,"executor getMaxSize is null");
+            Preconditions.checkArgument(cmdDefinition.getCoreSize()>=0,"executor coreSize is null");
+            Preconditions.checkArgument(cmdDefinition.getMaxSize()>=0,"executor getMaxSize is null");
 
             executor.setCorePoolSize(cmdDefinition.getCoreSize());
             executor.setMaxPoolSize(cmdDefinition.getMaxSize());
             return cmdDefinition;
         }
-
     }
 
-    public static ThreadPoolTaskExecutor getExecutor() {
+    public ThreadPoolTaskExecutor getExecutor() {
         return executor;
     }
 

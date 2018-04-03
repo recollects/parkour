@@ -9,11 +9,9 @@ import java.util.List;
  */
 public interface AsynExecutorService {
 
-
-
     /**
-     * 获取所有命令列表
-     * @return
+     * 定时来触发哪个类型的命令执行
+     * @param cmd
      */
-    List<String> getAsynExecutedCmds();
+    void pushCmdToExecuter(String cmd);
 }

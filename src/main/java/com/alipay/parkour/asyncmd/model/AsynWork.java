@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface AsynExecutedHandle {
+public @interface AsynWork {
 
     /**
      * 命令类型[cmdType]

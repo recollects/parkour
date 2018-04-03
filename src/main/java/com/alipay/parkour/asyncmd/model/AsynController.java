@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Service
-public @interface AsynExecuted {
+public @interface AsynController {
 
     String value() default "";
 }

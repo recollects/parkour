@@ -2,7 +2,7 @@ package com.alipay.parkour.utils;
 
 import com.alipay.parkour.bean.DemoAAsynExecutor;
 import com.alipay.parkour.bean.DemoBAsynExecutor;
-import com.alipay.parkour.asyncmd.model.AsynExecutedHandle;
+import com.alipay.parkour.asyncmd.model.AsynWork;
 import com.alipay.parkour.asyncmd.model.AsynExecutorCmd;
 
 import java.lang.reflect.Method;
@@ -32,8 +32,8 @@ public class ReflectionUtilsTest {
         Method doWork = DemoAAsynExecutor.class.getMethod("doWork", AsynExecutorCmd.class);
         Method doWork1 = DemoBAsynExecutor.class.getMethod("doWork", AsynExecutorCmd.class);
 
-        AsynExecutedHandle annotation = doWork.getAnnotation(AsynExecutedHandle.class);
-        AsynExecutedHandle annotation1 = doWork1.getAnnotation(AsynExecutedHandle.class);
+        AsynWork annotation = doWork.getAnnotation(AsynWork.class);
+        AsynWork annotation1 = doWork1.getAnnotation(AsynWork.class);
         System.out.println(annotation==annotation1);
 
     }
