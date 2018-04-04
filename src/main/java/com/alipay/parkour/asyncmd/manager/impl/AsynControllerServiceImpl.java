@@ -5,6 +5,7 @@ import com.alipay.parkour.asyncmd.manager.AsynControllerService;
 import com.alipay.parkour.asyncmd.model.AsynCmdDefinition;
 import com.alipay.parkour.asyncmd.model.AsynCmdDefinition.Builder;
 import com.alipay.parkour.asyncmd.model.AsynController;
+import com.alipay.parkour.asyncmd.model.AsynThreadPool;
 import com.alipay.parkour.asyncmd.model.AsynWork;
 import com.alipay.parkour.utils.ReflectionUtils;
 import com.google.common.base.Predicate;
@@ -89,6 +90,7 @@ public class AsynControllerServiceImpl implements AsynControllerService ,Applica
             public boolean apply(Method input) {
 
                 AsynWork asynConf = input.getAnnotation(AsynWork.class);
+                AsynThreadPool asynThreadPool=input.getAnnotation(AsynThreadPool.class);
 
                 if (asynConf != null) {
                     if (asynExecutedCmds.contains(asynConf.value())) {
@@ -98,9 +100,9 @@ public class AsynControllerServiceImpl implements AsynControllerService ,Applica
                     //解析对任务的配置信息
                     AsynCmdDefinition builder = new Builder(asynCtrl, input)
                             .cmdType(asynConf.value())
-                            .coreSize(asynConf.coreSize())
+                            .coreSize(asynThreadPool.coreSize())
                             .size(asynConf.size())
-                            .maxSize(asynConf.maxSize())
+                            .maxSize(asynThreadPool.maxSize())
                             .backup(asynConf.backup())
                             .priority(asynConf.priority())
                             .builder();
@@ -108,7 +110,7 @@ public class AsynControllerServiceImpl implements AsynControllerService ,Applica
                     //存在map里，KEY是命令类型，VALUE是这条命令的配置信息
                     asynCmdDefinitionMap.put(asynConf.value(), builder);
                     asynExecutedCmds.add(asynConf.value());
-                    logger.debug("装载命令信息中...,cmdType:{},asynCmdDefinition:{}", asynConf.value(), builder);
+                    logger.debug("装载命令中...,cmdType:{},asynCmdDefinition:{}", asynConf.value(), builder);
                 }
                 return true;
             }

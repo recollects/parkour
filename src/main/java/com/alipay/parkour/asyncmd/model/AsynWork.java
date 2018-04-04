@@ -21,6 +21,7 @@ public @interface AsynWork {
      */
     String value();
 
+
     /**
      * 批量处理任务数量
      *
@@ -28,28 +29,17 @@ public @interface AsynWork {
      */
     int size() default 20;
 
-    /**
-     * 这类型命令线程池核心数
-     *
-     * @return
-     */
-    int coreSize() default 10;
-
-    /**
-     * 这类型命令线程池最大核心数
-     *
-     * @return
-     */
-    int maxSize() default 20;
 
     /**
      * 任务优先级,默认10!1优先级最高
+     *
      * @return
      */
     int priority() default 10;
 
     /**
      * 是否需要备份
+     *
      * @return
      */
     boolean backup() default false;

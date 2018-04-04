@@ -1,6 +1,7 @@
 package com.alipay.parkour.bean;
 
 import com.alipay.parkour.asyncmd.model.AsynController;
+import com.alipay.parkour.asyncmd.model.AsynThreadPool;
 import com.alipay.parkour.asyncmd.model.AsynWork;
 import com.alipay.parkour.asyncmd.model.AsynExecutorCmd;
 
@@ -14,6 +15,7 @@ public class DemoAAsynExecutor {
 
 
     @AsynWork("TP_S_1000:DEMO_A_ASYNEXECUTOR")
+    @AsynThreadPool(coreSize = 10,maxSize = 20)
     public void doWork(AsynExecutorCmd cmd) {
         System.out.println("DEMO   B  .....!!!!"+cmd);
     }
