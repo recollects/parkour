@@ -1,6 +1,6 @@
 package com.alipay.parkour.asyncmd.dal;
 
-import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdObject;
+import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdDO;
 import com.alipay.parkour.asyncmd.model.query.AsynExecutorCmdQuery;
 import com.alipay.parkour.common.dal.BaseDAO;
 
@@ -18,19 +18,19 @@ public interface AsynExecutorCmdDAO extends BaseDAO{
      *
      * @param cmdObject
      */
-    void save(AsynExecutorCmdObject cmdObject);
+    void save(AsynExecutorCmdDO cmdObject);
 
     /**
      * 更新命令
      *
      * @param cmdObject
      */
-    void update(AsynExecutorCmdObject cmdObject);
+    void update(AsynExecutorCmdDO cmdObject);
 
     /**
      * 数据备份
      */
-    void backup(AsynExecutorCmdObject cmdObject);
+    void backup(AsynExecutorCmdDO cmdObject);
 
     /**
      * 按业务编号命令类型查数据
@@ -38,12 +38,12 @@ public interface AsynExecutorCmdDAO extends BaseDAO{
      * @param cmdObject
      * @return
      */
-    AsynExecutorCmdObject selectByBusinessNoAndCmdType(AsynExecutorCmdQuery cmdObject);
+    AsynExecutorCmdDO selectByBusinessNoAndCmdType(AsynExecutorCmdQuery cmdObject);
 
     /**
      * @param cmdObject
      * @return
      */
-    List<AsynExecutorCmdObject> selectByCmdType(AsynExecutorCmdQuery cmdObject);
+    List<AsynExecutorCmdDO> selectByCmdType(AsynExecutorCmdQuery cmdObject);
 
 }

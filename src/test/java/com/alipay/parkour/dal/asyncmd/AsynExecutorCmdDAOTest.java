@@ -1,14 +1,19 @@
 package com.alipay.parkour.dal.asyncmd;
 
-import java.util.Date;
-import java.util.List;
-
+import com.alibaba.fastjson.JSONObject;
+import com.alipay.parkour.asyncmd.common.utils.SystemUtils;
 import com.alipay.parkour.asyncmd.dal.AsynExecutorCmdDAO;
-import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdObject;
+import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdDO;
 import com.alipay.parkour.asyncmd.model.query.AsynExecutorCmdQuery;
 import com.alipay.parkour.base.BaseJunit4Test;
+import com.google.common.collect.Maps;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author recollects
@@ -22,15 +27,22 @@ public class AsynExecutorCmdDAOTest extends BaseJunit4Test {
 
     @Test
     public void testSave() {
-        AsynExecutorCmdObject cmdObject = new AsynExecutorCmdObject();
-        cmdObject.setBusinessNo("DEMOA:test-001");
-        cmdObject.setCmdType("TP_S_1000:DEMO_A_ASYNEXECUTOR");
-        cmdObject.setContext("{}");
+        AsynExecutorCmdDO cmdObject = new AsynExecutorCmdDO();
+        cmdObject.setBusinessNo(UUID.randomUUID().toString());
+        cmdObject.setCmdType("TP_S_1000:DEMO_B_ASYNEXECUTOR");
+
+        Map<String,String> map = Maps.newHashMap();
+        map.put("userName","yejiadong");
+        map.put("age",27+"");
+        map.put("password","123456");
+        map.put("uuid", UUID.randomUUID().toString());
+
+        cmdObject.setContext(JSONObject.toJSONString(map));
         cmdObject.setCreator("YE");
         cmdObject.setModifier("YE");
-        cmdObject.setHostName("127.0.0.1");
+        cmdObject.setHostName(SystemUtils.getIP());
         cmdObject.setNextExecuteTime(new Date());
-        cmdObject.setRetryCount(8);
+        cmdObject.setRetryCount(0);
         cmdObject.setStatus("INIT");
         cmdObject.setTableName("parkour_asyn_executor_cmd");
         asynExecutorCmdDAO.save(cmdObject);
@@ -42,11 +54,10 @@ public class AsynExecutorCmdDAOTest extends BaseJunit4Test {
         cmdObject.setCmdType("TP_S_1000:DEMO_A_ASYNEXECUTOR");
         cmdObject.setTableName("parkour_asyn_executor_cmd");
         cmdObject.setPageSize(20);
-        List<AsynExecutorCmdObject> cmdObjectList = asynExecutorCmdDAO.selectByCmdType(cmdObject);
+        List<AsynExecutorCmdDO> cmdObjectList = asynExecutorCmdDAO.selectByCmdType(cmdObject);
 
         System.out.println(cmdObjectList);
 
     }
-
 
 }

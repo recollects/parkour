@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @version V1.0
  * @date 2018年03月31日 上午11:31
  */
-public class AsynExecutorCmdObject implements Serializable {
+public class AsynExecutorCmdDO implements Serializable {
 
     private static final long serialVersionUID = -961168037924367101L;
 

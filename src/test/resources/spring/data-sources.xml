@@ -51,7 +51,7 @@
         <property name="testOnReturn" value="false"/>
     </bean>
 
-    <!-- TODO 配置文件最好集成在组件里 -->
+    <!-- FIXME 配置文件最好集成在组件里 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="configLocation" value="classpath:dal/sqlmap-config.xml"/>
         <property name="dataSource" ref="dataSource"/>
@@ -73,7 +73,7 @@
     </bean>
 
     <!-- -->
-    <bean id="transactionTemplateNew" class="org.springframework.transaction.support.TransactionTemplate">
+    <bean id="transactionNewTemplate" class="org.springframework.transaction.support.TransactionTemplate">
         <property name="transactionManager">
             <ref local="transactionManager"/>
         </property>

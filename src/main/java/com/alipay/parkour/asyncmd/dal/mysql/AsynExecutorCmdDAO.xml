@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.alipay.parkour.asyncmd.dal.AsynExecutorCmdDAO">
-    <resultMap id="BaseResultMap" type="com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdObject">
+    <resultMap id="BaseResultMap" type="com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdDO">
         <id property="id" column="id" jdbcType="BIGINT"/>
 
         <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
@@ -81,7 +81,7 @@
 
     <select id="selectByCmdType" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/> from ${tableName}
-        where cmd_type=#{cmdType}
+        where cmd_type=#{cmdType} and status=#{status}
         <if test="pageSize != null">
             limit #{pageSize}
         </if>

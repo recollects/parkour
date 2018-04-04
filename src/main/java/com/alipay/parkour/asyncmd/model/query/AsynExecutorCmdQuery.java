@@ -1,5 +1,6 @@
 package com.alipay.parkour.asyncmd.model.query;
 
+
 import com.alipay.parkour.common.dal.BaseQuery;
 
 /**
@@ -11,6 +12,15 @@ public class AsynExecutorCmdQuery extends BaseQuery {
 
     private String cmdType;
     private String tableName;
+    private String status;
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
 
     public void setCmdType(String cmdType) {
         this.cmdType = cmdType;

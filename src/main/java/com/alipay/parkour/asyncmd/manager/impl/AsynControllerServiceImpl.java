@@ -1,6 +1,5 @@
 package com.alipay.parkour.asyncmd.manager.impl;
 
-import com.alipay.parkour.asyncmd.dal.AsynExecutorCmdDAO;
 import com.alipay.parkour.asyncmd.manager.AsynControllerService;
 import com.alipay.parkour.asyncmd.model.AsynCmdDefinition;
 import com.alipay.parkour.asyncmd.model.AsynCmdDefinition.Builder;
@@ -33,7 +32,7 @@ import java.util.Set;
  * @date 2018/4/3 15:42
  */
 @Service
-public class AsynControllerServiceImpl implements AsynControllerService ,ApplicationContextAware{
+public class AsynControllerServiceImpl implements AsynControllerService, ApplicationContextAware {
 
     /**
      * logger
@@ -90,7 +89,7 @@ public class AsynControllerServiceImpl implements AsynControllerService ,Applica
             public boolean apply(Method input) {
 
                 AsynWork asynConf = input.getAnnotation(AsynWork.class);
-                AsynThreadPool asynThreadPool=input.getAnnotation(AsynThreadPool.class);
+                AsynThreadPool asynThreadPool = input.getAnnotation(AsynThreadPool.class);
 
                 if (asynConf != null) {
                     if (asynExecutedCmds.contains(asynConf.value())) {
@@ -100,12 +99,17 @@ public class AsynControllerServiceImpl implements AsynControllerService ,Applica
                     //解析对任务的配置信息
                     AsynCmdDefinition builder = new Builder(asynCtrl, input)
                             .cmdType(asynConf.value())
-                            .coreSize(asynThreadPool.coreSize())
                             .size(asynConf.size())
-                            .maxSize(asynThreadPool.maxSize())
                             .backup(asynConf.backup())
                             .priority(asynConf.priority())
                             .builder();
+
+                    if (asynThreadPool != null) {
+                        builder.setCoreSize(asynThreadPool.coreSize());
+                        builder.setMaxSize(asynThreadPool.maxSize());
+                    }
+
+                    logger.warn("{}命令类型未配置线程池", asynConf.value());
 
                     //存在map里，KEY是命令类型，VALUE是这条命令的配置信息
                     asynCmdDefinitionMap.put(asynConf.value(), builder);

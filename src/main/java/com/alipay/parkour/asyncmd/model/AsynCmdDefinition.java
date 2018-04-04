@@ -19,9 +19,9 @@ public class AsynCmdDefinition {
 
     private Integer size;
 
-    private Integer coreSize;
+    private Integer coreSize=1;
 
-    private Integer maxSize;
+    private Integer maxSize=1;
 
     private Object object;
 
@@ -75,12 +75,13 @@ public class AsynCmdDefinition {
 
         public AsynCmdDefinition builder() {
 
-            Preconditions.checkArgument(cmdDefinition.getCoreSize() >= 0, "asynCmdDefinition executor coreSize <=0");
-            Preconditions.checkArgument(cmdDefinition.getMaxSize() >= 0, "asynCmdDefinition executor maxSize <=0");
-            Preconditions.checkArgument(cmdDefinition.getSize() >= 0, "asynCmdDefinition size <=0");
+            Preconditions.checkArgument(cmdDefinition.getCoreSize() >= 1, "asynCmdDefinition executor coreSize <=1");
+            Preconditions.checkArgument(cmdDefinition.getMaxSize() >= 1, "asynCmdDefinition executor maxSize <=1");
+            Preconditions.checkArgument(cmdDefinition.getSize() >= 1, "asynCmdDefinition size <=1");
 
             executor.setCorePoolSize(cmdDefinition.getCoreSize());
             executor.setMaxPoolSize(cmdDefinition.getMaxSize());
+            executor.initialize();
             return cmdDefinition;
         }
     }

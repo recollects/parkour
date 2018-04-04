@@ -1,7 +1,5 @@
 package com.alipay.parkour.asyncmd.manager;
 
-import java.util.List;
-
 /**
  * @author recollects
  * @version V1.0

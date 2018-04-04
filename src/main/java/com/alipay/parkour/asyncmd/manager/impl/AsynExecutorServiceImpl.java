@@ -1,7 +1,8 @@
 package com.alipay.parkour.asyncmd.manager.impl;
 
+import com.alipay.parkour.asyncmd.common.utils.SystemUtils;
 import com.alipay.parkour.asyncmd.dal.AsynExecutorCmdDAO;
-import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdObject;
+import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdDO;
 import com.alipay.parkour.asyncmd.manager.AsynControllerService;
 import com.alipay.parkour.asyncmd.manager.AsynExecutorService;
 import com.alipay.parkour.asyncmd.model.AsynCmdDefinition;
@@ -12,6 +13,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -48,21 +51,25 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
     /**
      * DAO
      */
+    @Autowired
     private AsynExecutorCmdDAO asynExecutorCmdDAO;
 
     /**
      * 事务模板
      */
+    @Autowired
     private TransactionTemplate transactionNewTemplate;
 
     /**
      * 事务模板
      */
+    @Autowired
     private TransactionTemplate transactionTemplate;
 
     /**
      * 线程池
      */
+    @Autowired
     protected ThreadPoolTaskExecutor executor;
 
     private static final String DEFAULT_TABLE_NAME = "asyn_executor_cmd";
@@ -75,7 +82,7 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
     /**
      * 队列最大容量
      */
-    private static final Integer MAX_QUEUE_CAPACITY = 2 >> 16;
+    private static final Integer MAX_QUEUE_CAPACITY = 2 << 16;
 
     /**
      * 将带了命令类型的类获取到,类似于springmvc web里的controller
@@ -115,34 +122,38 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
         cmdObject.setPageSize(executedConfig.getSize());
         cmdObject.setCmdType(cmdType);
         cmdObject.setTableName(ASYN_EXECUTOR_CMD_TABLE_NAME);
-        List<AsynExecutorCmdObject> asynExecutorCmdObjects = asynExecutorCmdDAO.selectByCmdType(cmdObject);
+        cmdObject.setStatus(AsynCmdStatusEnum.INIT.name());
 
-        List<AsynExecutorCmd> asynExecutorCmds = convertTOCmd(asynExecutorCmdObjects);
+        List<AsynExecutorCmdDO> asynExecutorCmdDOs = asynExecutorCmdDAO.selectByCmdType(cmdObject);
+
+        List<AsynExecutorCmd> asynExecutorCmds = convertTOCmd(asynExecutorCmdDOs);
 
         transactionNewTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                //TODO 将任务状态修改为PROCESSING状态
+                batUpdateStatus(asynExecutorCmds.toArray(new AsynExecutorCmd[asynExecutorCmds.size()]),AsynCmdStatusEnum.PROCESSING);
             }
         });
 
         Iterators.all(asynExecutorCmds.iterator(), new Predicate<AsynExecutorCmd>() {
             @Override
             public boolean apply(AsynExecutorCmd asynExecutorCmd) {
-                //TODO 存在线程池满状态,如果没有添加成功,将状态重置
-
                 try {
                     executor.execute(new AsynExecutorRunner(asynExecutorCmd));
                 } catch (RejectedExecutionException ree) {
                     logger.error("线程池任务已满,命令类型:{}", asynExecutorCmd.getCmdType(), ree);
-                    //TODO 状态重置
+                    asynExecutorCmd.setExceptionContext(ree.toString());
+                    batUpdateStatus(ArrayUtils.toArray(asynExecutorCmd),AsynCmdStatusEnum.INIT);
                 } catch (Exception e) {
                     logger.error("任务执行异常,asynExecutorCmd:{}", asynExecutorCmd, e);
+                    asynExecutorCmd.setExceptionContext(e.toString());
+                    batUpdateStatus(ArrayUtils.toArray(asynExecutorCmd),AsynCmdStatusEnum.EXCEPTION);
                 }
-
                 return true;
             }
         });
+
+        batUpdateStatus(asynExecutorCmds.toArray(new AsynExecutorCmd[asynExecutorCmds.size()]),AsynCmdStatusEnum.FINISHED);
 
     }
 
@@ -172,6 +183,33 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
     }
 
     /**
+     * @param asynExecutorCmds
+     */
+    private void batUpdateStatus(AsynExecutorCmd[] asynExecutorCmds,AsynCmdStatusEnum statusEnum) {
+
+        if (ArrayUtils.isEmpty(asynExecutorCmds)) return;
+
+        List<AsynExecutorCmd> cmdList = Arrays.asList(asynExecutorCmds);
+
+        Iterators.all(cmdList.iterator(), new Predicate<AsynExecutorCmd>() {
+            @Override
+            public boolean apply(AsynExecutorCmd input) {
+                AsynExecutorCmdDO cmdDO = new AsynExecutorCmdDO();
+                cmdDO.setTableName(ASYN_EXECUTOR_CMD_TABLE_NAME);
+                cmdDO.setId(input.getId());
+                cmdDO.setStatus(statusEnum.name());
+                cmdDO.setModifier(SystemUtils.getHostNameNew());
+
+                asynExecutorCmdDAO.update(cmdDO);
+
+                return true;
+            }
+        });
+
+    }
+
+
+    /**
      * @param cmd
      * @param <T>
      */
@@ -196,6 +234,7 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
         CmdExecutor(AsynCmdDefinition asynCmdDefinition, T cmd) {
             this.asynCmdDefinition = asynCmdDefinition;
             this.cmd = cmd;
+            logger.debug("开始处理业务逻辑,asynCmdDefinition:{},命令数据:{}", asynCmdDefinition, cmd);
         }
 
         @Override
@@ -224,19 +263,19 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
     }
 
     /**
-     * @param asynExecutorCmdObjects
+     * @param asynExecutorCmdDOs
      * @return
      */
-    private List<AsynExecutorCmd> convertTOCmd(List<AsynExecutorCmdObject> asynExecutorCmdObjects) {
+    private List<AsynExecutorCmd> convertTOCmd(List<AsynExecutorCmdDO> asynExecutorCmdDOs) {
 
         List<AsynExecutorCmd> cmds = Lists.newArrayList();
 
-        if (CollectionUtils.isNotEmpty(asynExecutorCmdObjects)) {
-            Iterators.any(asynExecutorCmdObjects.iterator(), new Predicate<AsynExecutorCmdObject>() {
+        if (CollectionUtils.isNotEmpty(asynExecutorCmdDOs)) {
+            Iterators.all(asynExecutorCmdDOs.iterator(), new Predicate<AsynExecutorCmdDO>() {
                 AsynExecutorCmd cmd = null;
 
                 @Override
-                public boolean apply(AsynExecutorCmdObject input) {
+                public boolean apply(AsynExecutorCmdDO input) {
                     cmd = new AsynExecutorCmd();
                     cmd.setBusinessNo(input.getBusinessNo());
                     cmd.setCmdType(input.getCmdType());
@@ -247,7 +286,8 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
                     cmd.setId(input.getId());
                     cmd.setNextExecuteTime(input.getNextExecuteTime());
                     cmd.setStatus(AsynCmdStatusEnum.valueOf(input.getStatus()));
-                    return false;
+                    cmds.add(cmd);
+                    return true;
                 }
             });
 
@@ -255,20 +295,8 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
         return cmds;
     }
 
-    public void setTransactionNewTemplate(TransactionTemplate transactionNewTemplate) {
-        this.transactionNewTemplate = transactionNewTemplate;
-    }
-
-    public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
-        this.transactionTemplate = transactionTemplate;
-    }
-
     public void setTableNamePrefix(String tableNamePrefix) {
         this.tableNamePrefix = tableNamePrefix;
-    }
-
-    public void setExecutor(ThreadPoolTaskExecutor executor) {
-        this.executor = executor;
     }
 
 }

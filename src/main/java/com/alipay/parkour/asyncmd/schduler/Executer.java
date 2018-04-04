@@ -1,4 +1,4 @@
-package com.alipay.parkour.asyncmd.manager;
+package com.alipay.parkour.asyncmd.schduler;
 
 /**
  * @author recollects
@@ -9,8 +9,7 @@ public interface Executer {
 
     /**
      *
-     * @param businessKey
      * @throws Exception
      */
-    public void execute(String businessKey) throws Exception;
+    public void execute() throws Exception;
 }

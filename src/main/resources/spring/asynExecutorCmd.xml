@@ -4,12 +4,15 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
         http://mybatis.org/schema/mybatis-spring
         http://mybatis.org/schema/mybatis-spring.xsd
+        http://www.springframework.org/schema/task
+		http://www.springframework.org/schema/task/spring-task-3.0.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
@@ -17,10 +20,25 @@
         <property name="tableNamePrefix" value="parkour"/>
     </bean>
 
-    <!--<bean id="executor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">-->
-        <!--<property name="corePoolSize" value="10"/>-->
-        <!--<property name="maxPoolSize" value="20"/>-->
-    <!--</bean>-->
+    <bean id="schedulerTask" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+        <property name="poolSize" value="7"/>
+    </bean>
+
+    <bean id="asynSchdulerExecuter" class="com.alipay.parkour.asyncmd.schduler.impl.AsynSchdulerExecuterImpl"/>
+
+    <task:scheduled-tasks scheduler="schedulerTask">
+        <!-- 2S触发一次 -->
+        <task:scheduled ref="asynSchdulerExecuter" method="execute" cron="0/2 * * * * ? "/>
+    </task:scheduled-tasks>
 
 
+    <bean id="executor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="15"></property>
+        <property name="maxPoolSize" value="30"></property>
+        <property name="queueCapacity" value="600"></property>
+        <property name="keepAliveSeconds" value="300"></property>
+        <property name="rejectedExecutionHandler">
+            <bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />
+        </property>
+    </bean>
 </beans>

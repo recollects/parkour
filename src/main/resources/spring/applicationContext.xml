@@ -36,11 +36,6 @@
         <property name="markerInterface" value="com.alipay.parkour.common.dal.BaseDAO" />
     </bean>
 
-    <bean id="asynSchdulerThreadPool" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-        <property name="corePoolSize" value="15"></property>
-        <property name="maxPoolSize" value="30"></property>
-        <property name="queueCapacity" value="600"></property>
-        <property name="keepAliveSeconds" value="300"></property>
-    </bean>
+
     
 </beans>    
