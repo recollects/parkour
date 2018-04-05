@@ -142,8 +142,8 @@ public class AsynControllerServiceImpl implements AsynControllerService, Applica
     }
 
     @Override
-    public List<String> getAsynExecutedCmds() {
-        return asynExecutedCmds;
+    public List<AsynCmdDefinition> getAsynExecutedCmds() {
+        return (List<AsynCmdDefinition>) asynCmdDefinitionMap.values();
     }
 
     @Override

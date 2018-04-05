@@ -95,32 +95,29 @@ public class AsynExecutorServiceImpl implements AsynExecutorService {
     }
 
     /**
-     * @param cmdType
+     * @param cmdDefinition
      */
     @Override
-    public void pushCmdToExecuter(String cmdType) {
+    public void pushCmdToExecuter(AsynCmdDefinition cmdDefinition) {
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
                 //加事务控制
-                doExecute(cmdType);
+                doExecute(cmdDefinition);
             }
         });
     }
 
     /**
-     * @param cmdType
+     * @param cmdDefinition
      */
-    private void doExecute(String cmdType) {
+    private void doExecute(AsynCmdDefinition cmdDefinition) {
 
-        AsynCmdDefinition executedConfig = asynControllerService.getAsynCmdDefinitionMap().get(cmdType);
-
-        //TODO 需要考虑任务的优先级[折中处理方式,优先级高的线程数成比例,例如,10,5优先级,对应的线程数,就是高是低的一倍线程]
         AsynExecutorCmdQuery cmdObject = new AsynExecutorCmdQuery();
-        cmdObject.setPageSize(executedConfig.getSize());
-        cmdObject.setCmdType(cmdType);
+        cmdObject.setPageSize(cmdDefinition.getSize());
+        cmdObject.setCmdType(cmdDefinition.getCmdType());
         cmdObject.setTableName(ASYN_EXECUTOR_CMD_TABLE_NAME);
         cmdObject.setStatus(AsynCmdStatusEnum.INIT.name());
 

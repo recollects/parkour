@@ -1,5 +1,7 @@
 package com.alipay.parkour.asyncmd.manager;
 
+import com.alipay.parkour.asyncmd.model.AsynCmdDefinition;
+
 /**
  * @author recollects
  * @version V1.0
@@ -9,7 +11,7 @@ public interface AsynExecutorService {
 
     /**
      * 定时来触发哪个类型的命令执行
-     * @param cmd
+     * @param cmdDefinition
      */
-    void pushCmdToExecuter(String cmd);
+    void pushCmdToExecuter(AsynCmdDefinition cmdDefinition);
 }
