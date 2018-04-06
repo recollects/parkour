@@ -1,4 +1,4 @@
-package com.alipay.parkour.asyncmd.common.utils;
+package com.alipay.parkour.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

@@ -1,7 +1,7 @@
 package com.alipay.parkour.dal.asyncmd;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alipay.parkour.asyncmd.common.utils.SystemUtils;
+import com.alipay.parkour.utils.SystemUtils;
 import com.alipay.parkour.asyncmd.dal.AsynExecutorCmdDAO;
 import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdDO;
 import com.alipay.parkour.asyncmd.model.query.AsynExecutorCmdQuery;

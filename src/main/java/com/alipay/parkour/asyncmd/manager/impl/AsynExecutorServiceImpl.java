@@ -1,6 +1,6 @@
 package com.alipay.parkour.asyncmd.manager.impl;
 
-import com.alipay.parkour.asyncmd.common.utils.SystemUtils;
+import com.alipay.parkour.utils.SystemUtils;
 import com.alipay.parkour.asyncmd.dal.AsynExecutorCmdDAO;
 import com.alipay.parkour.asyncmd.dal.dataObject.AsynExecutorCmdDO;
 import com.alipay.parkour.asyncmd.manager.AsynControllerService;
