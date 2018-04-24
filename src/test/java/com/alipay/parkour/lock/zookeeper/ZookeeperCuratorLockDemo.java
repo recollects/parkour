@@ -3,6 +3,7 @@ package com.alipay.parkour.lock.zookeeper;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
+import org.apache.curator.framework.recipes.locks.InterProcessSemaphoreMutex;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 
 /**
@@ -33,12 +34,16 @@ public class ZookeeperCuratorLockDemo {
 
     }
 
+
     /**
      *
      */
     static class MyThread extends Thread {
 
+        //可重入锁
         InterProcessMutex lock = new InterProcessMutex(client, "/yejiadong");
+        //不可重入锁
+        InterProcessSemaphoreMutex lockNew = new InterProcessSemaphoreMutex(client, "/yejiadong");
 
         public static int i = 0;
 
@@ -58,7 +63,9 @@ public class ZookeeperCuratorLockDemo {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                System.out.println("lock--->" + i);
             }
+
         }
     }
 
