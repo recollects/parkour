@@ -36,6 +36,12 @@
         <property name="markerInterface" value="com.alipay.parkour.common.dal.BaseDAO" />
     </bean>
 
+    <!--<bean class="com.alipay.parkour.asyncmd.demo.InitializingBeanDemo"/>-->
+    <!--<bean class="com.alipay.parkour.asyncmd.demo.DisposableBeanDemo"/>-->
+    <!--<bean class="com.alipay.parkour.asyncmd.demo.BeanFactoryAwareDemo"/>-->
+    <!--<bean class="com.alipay.parkour.asyncmd.demo.BeanFactoryPostProcessorDemo"/>-->
+    <!--<bean class="com.alipay.parkour.asyncmd.demo.BeanNameAwareDemo"/>-->
+    <!--<bean class="com.alipay.parkour.asyncmd.demo.BeanPostProcessorDemo"/>-->
+    <!--<bean class="com.alipay.parkour.asyncmd.demo.InstantiationAwareBeanPostProcessorAdapterDemo"/>-->
 
-    
 </beans>    
