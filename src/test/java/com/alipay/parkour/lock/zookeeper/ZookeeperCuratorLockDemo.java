@@ -5,7 +5,6 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 
-
 /**
  * @author recollects
  * @version V1.0
@@ -22,17 +21,17 @@ public class ZookeeperCuratorLockDemo {
 
         client.start();
 
-//        InterProcessMutex lock = new InterProcessMutex(client, "/yejiadong");
+        //        InterProcessMutex lock = new InterProcessMutex(client, "/yejiadong");
 
         MyThread myThread = new MyThread();
 
+        new Thread(myThread).start();
         new Thread(myThread).start();
         new Thread(myThread).start();
 
         Thread.currentThread().join();
 
     }
-
 
     /**
      *
@@ -45,15 +44,15 @@ public class ZookeeperCuratorLockDemo {
 
         @Override
         public void run() {
-            try {
-                for (int j = 0; j < 100000; j++) {
+
+            for (int j = 0; j < 1000000; j++) {
+                try {
                     lock.acquire();
-                    i++;
-                    System.out.println("lock--->" + i);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
+                i++;
+                System.out.println("lock--->" + i);
                 try {
                     lock.release();
                 } catch (Exception e) {

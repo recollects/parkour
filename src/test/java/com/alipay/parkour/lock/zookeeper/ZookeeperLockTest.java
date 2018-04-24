@@ -1,5 +1,12 @@
 package com.alipay.parkour.lock.zookeeper;
 
+import org.apache.curator.RetryPolicy;
+import org.apache.curator.RetrySleeper;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.api.GetChildrenBuilder;
+import org.apache.curator.retry.ExponentialBackoffRetry;
+
 /**
  *
  * {@see https://www.cnblogs.com/luxiaoxun/p/4889764.html 扩展使用}
@@ -11,7 +18,7 @@ package com.alipay.parkour.lock.zookeeper;
  */
 public class ZookeeperLockTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws  Exception{
         Runnable runnable = new Runnable() {
             public void run() {
                 ZookeeperLock lock = null;
@@ -31,6 +38,9 @@ public class ZookeeperLockTest {
             Thread t = new Thread(runnable);
             t.start();
         }
+
+
+
     }
 
 }
