@@ -28,7 +28,7 @@
 
     <task:scheduled-tasks scheduler="schedulerTask">
         <!-- 2S触发一次 -->
-        <task:scheduled ref="asynSchdulerExecuter" method="execute" cron="0/2 * * * * ? "/>
+        <task:scheduled ref="asynSchdulerExecuter" method="execute" cron="0/20 * * * * ? "/>
     </task:scheduled-tasks>
 
 
