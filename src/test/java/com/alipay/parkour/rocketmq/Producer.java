@@ -7,6 +7,10 @@ import com.alibaba.rocketmq.common.message.Message;
 import com.alibaba.rocketmq.remoting.common.RemotingHelper;
 
 /**
+ *
+ * mqbroker.cmd -n 127.0.0.1:9876 autoCreateTopicEnable=true
+ *
+ *
  * {@see https://github.com/apache/rocketmq/tree/master/example/src/main/java/org/apache/rocketmq/example}
  * @author recollects
  * @version V1.0
